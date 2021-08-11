@@ -2,9 +2,9 @@
 #include "ofMain.h"
 #include "onnxruntime_cxx_api.h"
 
-class ofxONNXModel {
+class ofxOrt {
 public:
-	ofxONNXModel(const ORTCHAR_T* modelName, bool useCUDA);
+	ofxOrt(const ORTCHAR_T* modelName, bool useCUDA);
 	Ort::Session* getSession();
 
 	void forward(const Ort::RunOptions& run_options, const char* const* input_names, const Ort::Value* input_values, size_t input_count,

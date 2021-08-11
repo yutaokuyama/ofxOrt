@@ -1,6 +1,6 @@
 #include "ofxONNX.h"
 
-ofxONNXModel::ofxONNXModel(const ORTCHAR_T* modelName, bool useCUDA)
+ofxOrt::ofxOrt(const ORTCHAR_T* modelName, bool useCUDA)
 {
 	try {
 		Ort::SessionOptions sessionOption;
@@ -16,11 +16,11 @@ ofxONNXModel::ofxONNXModel(const ORTCHAR_T* modelName, bool useCUDA)
 
 }
 
-Ort::Session* ofxONNXModel::getSession() {
+Ort::Session* ofxOrt::getSession() {
 	return session_;
 }
 
-void ofxONNXModel::forward(const Ort::RunOptions& run_options, const char* const* input_names, const Ort::Value* input_values, size_t input_count,
+void ofxOrt::forward(const Ort::RunOptions& run_options, const char* const* input_names, const Ort::Value* input_values, size_t input_count,
 	const char* const* output_names, Ort::Value* output_values, size_t output_count) {
 	session_->Run(Ort::RunOptions{ nullptr }, input_names, input_values, input_count, output_names, output_values, output_count);
 
@@ -28,7 +28,7 @@ void ofxONNXModel::forward(const Ort::RunOptions& run_options, const char* const
 }
 
 
-void ofxONNXModel::enableCUDA(Ort::SessionOptions& options) {
+void ofxOrt::enableCUDA(Ort::SessionOptions& options) {
 	OrtCUDAProviderOptions cuda_option = OrtCUDAProviderOptions{ 0 };
 	options.AppendExecutionProvider_CUDA(cuda_option);
 }
