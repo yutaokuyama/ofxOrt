@@ -1,4 +1,4 @@
-#include "ofxONNX.h"
+#include "ofxOrt.h"
 
 ofxOrt::ofxOrt(const ORTCHAR_T* modelName, bool useCUDA)
 {
