@@ -1,0 +1,11 @@
+*.sln
+*.vcxproj
+*.filters
+*\icon.rc
+*.config
+*\obj
+*\.vs
+*\packages
+*\bin
+*.exe
+*.user
