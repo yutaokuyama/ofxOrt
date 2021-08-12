@@ -18,7 +18,7 @@ class ofApp : public ofBaseApp{
 
 
 		void keyPressed(int key);
-		void drawBins(std::array<float, 10> results);
+		void drawBins(std::vector<float> results);
 		
 		ofxOrt* ort;
 		ofFbo screenFbo;

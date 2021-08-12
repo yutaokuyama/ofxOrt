@@ -20,23 +20,16 @@ void ofApp::inference() {
 
 	auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
-	std::array<float, 10> results_{};
-	int64_t result_{ 0 };
-
-	Ort::Value output_tensor{ nullptr };
-	std::array<int64_t, 2> output_shape{ 1, 10 };
-
 	ofxOrtImageTensor input_tensor_original = ofxOrtImageTensor(memory_info, sampleFbo.getTexture(), true);
+	ofxOrt1DTensor output_tensor_original = ofxOrt1DTensor(memory_info, 10);
 
-	output_tensor = Ort::Value::CreateTensor<float>(memory_info, results_.data(), results_.size(), output_shape.data(), output_shape.size());
-	ort->forward(Ort::RunOptions{ nullptr }, input_names, &(input_tensor_original.getTensor()), 1, output_names, &output_tensor, 1);
-
-	drawBins(results_);
+	ort->forward(Ort::RunOptions{ nullptr }, input_names, &(input_tensor_original.getTensor()), 1, output_names, &(output_tensor_original.getTensor()), 1);
+	drawBins(output_tensor_original.getData());
 }
 
 
 //--------------------------------------------------------------
-void ofApp::drawBins(std::array<float, 10> results) {
+void ofApp::drawBins(std::vector<float> results) {
 	float min = 9999;
 	float max = -9999;
 	float width = 100;

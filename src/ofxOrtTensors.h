@@ -8,7 +8,7 @@ class ofxOrtImageTensor{
 		{
 			ofFloatPixels pix;
 			tex.readToPixels(pix);
-			if(isGrayscale){
+			if (isGrayscale) {
 				pix.setImageType(OF_IMAGE_GRAYSCALE);
 			}
 			texData = std::vector<float>{pix.getData(), pix.getData() + pix.size() };
@@ -22,4 +22,27 @@ class ofxOrtImageTensor{
 		Ort::Value tensor;
 		std::vector<float> texData;
 		std::array<int64_t, 4> data_shape;
+};
+
+class ofxOrt1DTensor {
+	public:
+		ofxOrt1DTensor(Ort::MemoryInfo& memInfo,int numValue)
+		:tensor_(nullptr)
+		{
+			data_.resize(numValue);
+			data_shape_ = std::array<int64_t, 2>{ 1, int(data_.size()) };
+			tensor_ = Ort::Value::CreateTensor<float>(memInfo, data_.data(), data_.size(), data_shape_.data(), data_shape_.size());
+		}
+
+		Ort::Value& getTensor() {
+			return tensor_;
+		}
+
+		std::vector<float> getData(){
+			return data_;
+		}
+	private:
+		std::vector<float> data_;
+		Ort::Value tensor_;
+		std::array<int64_t, 2> data_shape_;
 };
