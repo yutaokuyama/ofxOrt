@@ -4,7 +4,7 @@
 
 class ofxOrtImageTensor{
 	public:
-		ofxOrtImageTensor(Ort::MemoryInfo& memInfo, ofTexture tex, bool isGrayscale ) :tensor( nullptr )
+		ofxOrtImageTensor(Ort::MemoryInfo& memInfo, ofTexture& tex, bool isGrayscale=false ) :tensor( nullptr )
 		{
 			ofFloatPixels pix;
 			tex.readToPixels(pix);
@@ -18,6 +18,10 @@ class ofxOrtImageTensor{
 		Ort::Value& getTensor(){
 			return tensor;
 		}
+
+		std::vector<float>& getTexData() {
+			return texData;
+		};
 	private:
 		Ort::Value tensor;
 		std::vector<float> texData;
