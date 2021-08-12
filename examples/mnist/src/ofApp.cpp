@@ -5,7 +5,7 @@ void ofApp::setup() {
 	allocateFbos();
 	clearFbos();
 	buildModel();
-
+	
 }
 
 void ofApp::buildModel() {
@@ -15,17 +15,6 @@ void ofApp::buildModel() {
 
 void ofApp::inference() {
 
-	static constexpr const int img_w = 28;
-	static constexpr const int img_h = 28;
-
-	std::array<float, img_w* img_h> input_image_{};
-	ofPixels pix;
-	sampleFbo.getTexture().readToPixels(pix);
-	for (int i = 0; i < pix.size() / 3; i++) {
-		float value = (pix.getData()[i * 3] > 1) ? 1 : 0;
-		input_image_[i] = value;
-	}
-
 	const char* input_names[] = { "Input3" };
 	const char* output_names[] = { "Plus214_Output_0" };
 
@@ -34,16 +23,13 @@ void ofApp::inference() {
 	std::array<float, 10> results_{};
 	int64_t result_{ 0 };
 
-	Ort::Value input_tensor{ nullptr };
-	std::array<int64_t, 4> input_shape{ 1, 1, img_w, img_h };
 	Ort::Value output_tensor{ nullptr };
 	std::array<int64_t, 2> output_shape{ 1, 10 };
 
+	ofxOrtImageTensor input_tensor_original = ofxOrtImageTensor(memory_info, sampleFbo.getTexture(), true);
 
-	input_tensor = Ort::Value::CreateTensor<float>(memory_info, input_image_.data(), input_image_.size(), input_shape.data(), input_shape.size());
 	output_tensor = Ort::Value::CreateTensor<float>(memory_info, results_.data(), results_.size(), output_shape.data(), output_shape.size());
-
-	ort->forward(Ort::RunOptions{ nullptr }, input_names, &input_tensor, 1, output_names, &output_tensor, 1);
+	ort->forward(Ort::RunOptions{ nullptr }, input_names, &(input_tensor_original.getTensor()), 1, output_names, &output_tensor, 1);
 
 	drawBins(results_);
 }
