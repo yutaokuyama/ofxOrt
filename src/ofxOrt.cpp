@@ -27,7 +27,6 @@ void ofxOrt::forward(const Ort::RunOptions& run_options, const char* const* inpu
 
 }
 
-
 void ofxOrt::enableCUDA(Ort::SessionOptions& options) {
 	OrtCUDAProviderOptions cuda_option = OrtCUDAProviderOptions{ 0 };
 	options.AppendExecutionProvider_CUDA(cuda_option);

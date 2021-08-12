@@ -1,6 +1,7 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxOrtTensors.h"
+#include "ofxOrtUtils.h"
 #include "onnxruntime_cxx_api.h"
 
 class ofxOrt {
