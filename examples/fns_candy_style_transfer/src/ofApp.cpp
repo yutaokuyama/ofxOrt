@@ -28,7 +28,9 @@ void ofApp::draw() {
 	fbo.end();
 	fbo.draw(0.0, 0.0);
 
-	ofxOrtUtils::hwc_to_chw(fbo.getTexture(), pixCHW);
+	ofFloatPixels hwcPixels;
+	fbo.getTexture().readToPixels(hwcPixels);
+	ofxOrtUtils::hwc2chw(hwcPixels, pixCHW);
 	ofFloatImage img_CHW;
 	img_CHW.setFromPixels(pixCHW);
 	img_CHW.update();
@@ -45,7 +47,7 @@ void ofApp::keyPressed(int key) {
 }
 
 
-void ofApp::inference(ofFloatImage content) {
+void ofApp::inference(ofFloatImage& content) {
 
 	const char* input_names[] = { "inputImage" };
 	const char* output_names[] = { "outputImage" };
@@ -65,10 +67,11 @@ void ofApp::inference(ofFloatImage content) {
 
 	pix.setFromAlignedPixels(output_tensor.getTexData().data(), content.getWidth(), content.getHeight(), OF_PIXELS_RGB, content.getHeight() * 3);
 
-	ofxOrtUtils::chw_to_hwc(pix, pix_result, content.getWidth(), content.getHeight(), true);
-
+	ofxOrtUtils::chw2hwc(pix, pix_result, true);
+	//ofxOrtUtils::chw2hwc(pix, pix_result);
 	ofImage result;
 	result.setFromPixels(pix_result);
 	result.update();
 	result.draw(720.0, 0.0);
 }
+

@@ -1,1 +1,3 @@
+ofxOpenCv
+ofxCv
 ofxOrt
