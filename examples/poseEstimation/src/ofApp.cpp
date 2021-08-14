@@ -55,8 +55,8 @@ void ofApp::inference(ofFloatImage& content) {
 
 	ofFloatPixels pix;
 
-	ofxOrtImageTensor input_tensor = ofxOrtImageTensor(memory_info, content.getTexture());
-	ofxOrtImageTensor output_tensor = ofxOrtImageTensor(memory_info, numChannel, width, height, true);
+	ofxOrtImageTensor<float> input_tensor(memory_info, content.getTexture());
+	ofxOrtImageTensor<float> output_tensor(memory_info, numChannel, width, height, true);
 
 	ort->forward(Ort::RunOptions{ nullptr }, input_names, &(input_tensor.getTensor()), 1, output_names, &(output_tensor.getTensor()), 1);
 
