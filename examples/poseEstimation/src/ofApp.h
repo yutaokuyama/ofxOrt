@@ -11,16 +11,11 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 
-		void keyPressed(int key);
 		void inference(ofFloatImage& content);
 
-
-
-		ofxOrt* ort;
-		ofFloatImage img;
-		
+		ofxOrt* ort;		
 		ofFbo fbo;
 
-		int currentIndex = 0;
-		ofImage original;
+		ofVideoPlayer vid;
+
 };

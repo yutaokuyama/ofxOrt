@@ -6,29 +6,26 @@ void ofApp::setup() {
 	ort = new ofxOrt(modelName, true);
 
 	ort->printModelInfo();
-	img.load("sample.png");
-	img.resize(256, 256);
-	img.update();
 
+	vid.load("danceInOcean.mp4");
+	vid.play();
+	
 	fbo.allocate(256, 256, GL_RGB);
-
-	original.load("sample.png");
-
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-
+	vid.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
 	fbo.begin();
 	ofClear(0, 255);
-	img.draw(0.0, 0.0, 256, 256);
-
+	vid.draw(0.0, 0.0, 256, 256);
 	fbo.end();
-	img.draw(0.0, 0.0, ofGetWidth() / 2.0, ofGetWidth() / 2.0);
+
+	vid.draw(0.0, 0.0, ofGetWidth() / 2.0, ofGetWidth() / 2.0);
 
 	ofFloatPixels pix;
 	ofFloatPixels chw;
@@ -36,25 +33,15 @@ void ofApp::draw() {
 
 	ofxOrtUtils::rgb2chw(pix, chw, true, true);
 
-	ofFloatImage img;
-	img.setFromPixels(chw);
-	img.update();
+	ofFloatImage src;
+	src.setFromPixels(chw);
+	src.update();
 
-
-	inference(img);
-	ofDrawBitmapString(ofToString(currentIndex), 0, 10);
-	ofDrawBitmapString(ofToString(ofGetFrameRate()), 0, 20);
+	inference(src);
 
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
-	if (key == 'a') {
-		currentIndex = (currentIndex + 1) % 16;
-	}
-}
-
-
 void ofApp::inference(ofFloatImage& content) {
 
 	const char* input_names[] = { "input" };
@@ -62,21 +49,36 @@ void ofApp::inference(ofFloatImage& content) {
 
 	auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
+	const int numChannel = 16;
+	const int width = 64;
+	const int height = 64;
+
 	ofFloatPixels pix;
 
-
 	ofxOrtImageTensor input_tensor = ofxOrtImageTensor(memory_info, content.getTexture());
-	ofxOrtImageTensor output_tensor = ofxOrtImageTensor(memory_info, 16, 64, 64, true);
+	ofxOrtImageTensor output_tensor = ofxOrtImageTensor(memory_info, numChannel, width, height, true);
 
 	ort->forward(Ort::RunOptions{ nullptr }, input_names, &(input_tensor.getTensor()), 1, output_names, &(output_tensor.getTensor()), 1);
 
-
-
 	std::vector<std::vector<float>> dstArray;
-	ofxOrtUtils::splitImageDataArray(output_tensor.getTexData(), dstArray, 16, 64, 64);
-	std::vector<ofFloatImage> heatmaps = ofxOrtUtils::buildImagesFromData(dstArray, 64, 64);
+	ofxOrtUtils::splitImageDataArray(output_tensor.getTexData(), dstArray, numChannel, width, height);
+	std::vector<ofFloatImage> heatmaps = ofxOrtUtils::buildImagesFromData(dstArray, width, height);
 
-	heatmaps[currentIndex].draw(ofGetWidth() / 2.0, 0.0, ofGetWidth() / 2.0, ofGetWidth() / 2.0);
+	for (int i = 0; i < numChannel; i++) {
+		int size = (ofGetWidth() / 2.0) / 4;
+		glm::vec2 offset(size * (i / 4), size * (i % 4));
 
+		//draw heatmaps
+		heatmaps[i].draw(ofGetWidth() / 2.0 + offset.x, offset.y, size, size);
+
+
+		//draw joint on original image
+		cv::Point jointPosition;
+		cv::Mat heatmatMat= ofxCv::toCv(heatmaps[i]);
+		cv::minMaxLoc(heatmatMat, NULL, NULL, NULL, &jointPosition);
+		glm::vec2 jointPointAsOf = ofxCv::toOf(jointPosition);
+		float scale = (ofGetWidth() / 2.0) / width;
+		ofDrawCircle(jointPointAsOf.x * scale, jointPointAsOf.y * scale, 2);
+	}
 
 }
