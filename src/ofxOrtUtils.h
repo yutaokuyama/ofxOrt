@@ -14,6 +14,25 @@ public:
 
 		chw.setFromAlignedPixels(data, hwc.getWidth(), hwc.getHeight(), OF_PIXELS_RGB, hwc.getHeight() * hwc.getNumChannels());
 	}
+
+	static void rgb2chw(ofFloatPixels src, ofFloatPixels& dst, bool shouldNormalize, bool shouldSwapRg) {
+		//TODO::extremely inefficient
+		if (shouldSwapRg) {
+			src.swapRgb();
+		}
+		if (shouldNormalize) {
+			for (int i = 0; i < src.getHeight(); i++) {
+				for (int j = 0; j < src.getWidth(); j++) {
+					int index = i * src.getHeight() + j;
+					src[3 * index + 0] = (src[3 * index + 0] - 0.406) / 0.225;
+					src[3 * index + 1] = (src[3 * index + 1] - 0.456) / 0.224;
+					src[3 * index + 2] = (src[3 * index + 2] - 0.485) / 0.229;
+				}
+			}
+		}
+		hwc2chw(src, dst);
+	}
+
 	//TODO::extremely inefficient
 
 	static void chw2hwc(const ofFloatPixels& pixels_chw, ofFloatPixels& pixels_hwc, bool normalize = false) {

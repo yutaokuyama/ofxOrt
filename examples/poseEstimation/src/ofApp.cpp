@@ -31,24 +31,10 @@ void ofApp::draw() {
 	img.draw(0.0, 0.0, ofGetWidth() / 2.0, ofGetWidth() / 2.0);
 
 	ofFloatPixels pix;
+	ofFloatPixels chw;
 	fbo.getTexture().readToPixels(pix);
 
-
-	pix.swapRgb();
-
-
-
-	for (int i = 0; i < pix.getHeight(); i++) {
-		for (int j = 0; j < pix.getWidth(); j++) {
-			int index = i * pix.getHeight() + j;
-			pix[3 * index + 0] = (pix[3 * index + 0] - 0.406) / 0.225;
-			pix[3 * index + 1] = (pix[3 * index + 1] - 0.456) / 0.224;
-			pix[3 * index + 2] = (pix[3 * index + 2] - 0.485) / 0.229;
-		}
-	}
-
-	ofFloatPixels chw;
-	ofxOrtUtils::hwc2chw(pix, chw);
+	ofxOrtUtils::rgb2chw(pix, chw, true, true);
 
 	ofFloatImage img;
 	img.setFromPixels(chw);
