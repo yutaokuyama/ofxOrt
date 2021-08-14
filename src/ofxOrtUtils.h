@@ -34,3 +34,26 @@ public:
 	}
 };
 
+	static void splitImageDataArray(const std::vector<float> data, std::vector<std::vector<float>>& dstArray, const int numTex, const int width, const int height) {
+		//TODO: grayscale only
+		//dstArray.resize(numTex);
+		const int offset = (width * height);
+		for (int i = 0; i < numTex; i++) {
+			dstArray.emplace_back(std::vector<float>({ data.begin() + offset * i, data.begin() + offset * i + offset }));
+		}
+	}
+
+	static std::vector<ofFloatImage> buildImagesFromData(const std::vector<std::vector<float>> data, const int width, const int height) {
+		std::vector<ofFloatImage> images;
+		//TODO: grayscale only
+		for (auto& value : data) {
+			ofFloatPixels pixels;
+			ofFloatImage img;
+			pixels.setFromAlignedPixels(value.data(), width, height, OF_PIXELS_GRAY, height);
+			img.setFromPixels(pixels);
+			img.update();
+			images.push_back(img);
+		}
+		return images;
+	}
+};

@@ -10,7 +10,7 @@ void ofApp::setup() {
 	img.resize(256, 256);
 	img.update();
 
-	fbo.allocate(256, 256,GL_RGB);
+	fbo.allocate(256, 256, GL_RGB);
 
 	original.load("sample.png");
 
@@ -25,7 +25,7 @@ void ofApp::update() {
 void ofApp::draw() {
 	fbo.begin();
 	ofClear(0, 255);
-	img.draw(0.0, 0.0, 256,256);
+	img.draw(0.0, 0.0, 256, 256);
 
 	fbo.end();
 	img.draw(0.0, 0.0, ofGetWidth() / 2.0, ofGetWidth() / 2.0);
@@ -34,7 +34,7 @@ void ofApp::draw() {
 	fbo.getTexture().readToPixels(pix);
 
 
-	//pix.swapRgb();
+	pix.swapRgb();
 
 
 
@@ -56,7 +56,7 @@ void ofApp::draw() {
 
 
 	inference(img);
-	ofDrawBitmapString(ofToString(currentIndex),0, 10);
+	ofDrawBitmapString(ofToString(currentIndex), 0, 10);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 0, 20);
 
 }
@@ -84,18 +84,13 @@ void ofApp::inference(ofFloatImage& content) {
 
 	ort->forward(Ort::RunOptions{ nullptr }, input_names, &(input_tensor.getTensor()), 1, output_names, &(output_tensor.getTensor()), 1);
 
-	int offset = (64 * 64) * currentIndex;
-	std::vector<float> feat0 = { output_tensor.getTexData().begin()+ offset, output_tensor.getTexData().begin()+ offset +  64*64 };
-	pix.setFromAlignedPixels(feat0.data(), 64, 64, OF_PIXELS_GRAY, 64);
 
 
-	ofImage result;
-	result.setFromPixels(pix);
-	result.update();
-	ofSetColor(255, 255, 255, 127);
-	result.draw(ofGetWidth()/2.0, 0.0,ofGetWidth()/2.0,ofGetWidth()/2.0);
+	std::vector<std::vector<float>> dstArray;
+	ofxOrtUtils::splitImageDataArray(output_tensor.getTexData(), dstArray, 16, 64, 64);
+	std::vector<ofFloatImage> heatmaps = ofxOrtUtils::buildImagesFromData(dstArray, 64, 64);
 
-	original.draw(ofGetWidth() / 2.0, 0.0, ofGetWidth() / 2.0, ofGetWidth() / 2.0);
+	heatmaps[currentIndex].draw(ofGetWidth() / 2.0, 0.0, ofGetWidth() / 2.0, ofGetWidth() / 2.0);
 
 
 }
