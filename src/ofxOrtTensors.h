@@ -11,10 +11,29 @@ public:
 		if (isGrayscale) {
 			pix.setImageType(OF_IMAGE_GRAYSCALE);
 		}
+
 		texData = std::vector<float>{ pix.getData(), pix.getData() + pix.size() };
 		data_shape = std::array<int64_t, 4>{ 1, int(pix.getNumChannels()), int(tex.getWidth()), int(tex.getHeight()) };
 		tensor = Ort::Value::CreateTensor<float>(memInfo, texData.data(), texData.size(), data_shape.data(), data_shape.size());
 	}
+
+	ofxOrtImageTensor(Ort::MemoryInfo& memInfo, int numTex, int width, int height, bool isGrayscale = false) :tensor(nullptr)
+	{
+
+		ofFloatPixels tmp;
+		if (isGrayscale) {
+			tmp.allocate(width, height, OF_IMAGE_GRAYSCALE);
+		}
+		else {
+			tmp.allocate(width, height, OF_IMAGE_COLOR);
+
+		}
+		texData.resize(tmp.size() * numTex);
+
+		data_shape = std::array<int64_t, 4>{ 1, numTex, width, height };
+		tensor = Ort::Value::CreateTensor<float>(memInfo, texData.data(), texData.size(), data_shape.data(), data_shape.size());
+	}
+
 	Ort::Value& getTensor() {
 		return tensor;
 	}
