@@ -30,7 +30,7 @@ void ofApp::draw() {
 
 	ofFloatPixels hwcPixels;
 	fbo.getTexture().readToPixels(hwcPixels);
-	ofxOrtUtils::hwc2chw(hwcPixels, pixCHW);
+	ofxOrtUtils::rgb2chw(hwcPixels, pixCHW, true, true,1.0);
 	ofFloatImage img_CHW;
 	img_CHW.setFromPixels(pixCHW);
 	img_CHW.update();
@@ -67,8 +67,8 @@ void ofApp::inference(ofFloatImage& content) {
 
 	pix.setFromAlignedPixels(output_tensor.getTexData().data(), content.getWidth(), content.getHeight(), OF_PIXELS_RGB, content.getHeight() * 3);
 
-	ofxOrtUtils::chw2hwc(pix, pix_result, true);
-	//ofxOrtUtils::chw2hwc(pix, pix_result);
+	ofxOrtUtils::chw2hwc(pix, pix_result, 1.0/255.0);
+	pix_result.swapRgb();
 	ofImage result;
 	result.setFromPixels(pix_result);
 	result.update();

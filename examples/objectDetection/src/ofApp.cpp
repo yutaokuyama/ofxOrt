@@ -2,8 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-	const ORTCHAR_T* modelName = L"tinyyolov2-8.onnx";
-	ort = new ofxOrt(modelName, true);
+	ort = new ofxOrt(ORT_TSTR("tinyyolov2-8.onnx"), true);
 	ort->printModelInfo();
 
 	original.load("cat.jpg");
