@@ -21,18 +21,48 @@ public:
 			src.swapRgb();
 		}
 		if (shouldNormalize) {
-			for (int i = 0; i < src.getHeight(); i++) {
-				for (int j = 0; j < src.getWidth(); j++) {
-					int index = i * src.getHeight() + j;
-					src[3 * index + 0] = (src[3 * index + 0] - 0.406) / 0.225;
-					src[3 * index + 1] = (src[3 * index + 1] - 0.456) / 0.224;
-					src[3 * index + 2] = (src[3 * index + 2] - 0.485) / 0.229;
+			normalizePixel(src);
 				}
+		hwc2chw(src, dst);
 			}
+
+
+	static void rgb2chw(ofFloatPixels src, ofFloatPixels& dst, bool shouldNormalize, bool shouldSwapRg, const float scaleValue = 1.0) {
+		//TODO::extremely inefficient
+		if (shouldSwapRg) {
+			src.swapRgb();
 		}
+		if (shouldNormalize) {
+			normalizePixel(src);
+		}
+		scalePixelValue(src, scaleValue);
+
 		hwc2chw(src, dst);
 	}
 
+
+
+	static void scalePixelValue(ofFloatPixels& pixels, const float value) {
+		for (int i = 0; i < pixels.getHeight(); i++) {
+			for (int j = 0; j < pixels.getWidth(); j++) {
+				int index = i * pixels.getHeight() + j;
+				pixels[3 * index + 0] *= value;
+				pixels[3 * index + 1] *= value;
+				pixels[3 * index + 2] *= value;
+			}
+		}
+	}
+
+	static void normalizePixel(ofFloatPixels& pixels) {
+		for (int i = 0; i < pixels.getHeight(); i++) {
+			for (int j = 0; j < pixels.getWidth(); j++) {
+				int index = i * pixels.getHeight() + j;
+				pixels[3 * index + 0] = (pixels[3 * index + 0] - 0.406) / 0.225;
+				pixels[3 * index + 1] = (pixels[3 * index + 1] - 0.456) / 0.224;
+				pixels[3 * index + 2] = (pixels[3 * index + 2] - 0.485) / 0.229;
+			}
+		}
+	}
 	//TODO::extremely inefficient
 
 	static void chw2hwc(const ofFloatPixels& pixels_chw, ofFloatPixels& pixels_hwc, bool normalize = false) {

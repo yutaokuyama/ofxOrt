@@ -13,8 +13,9 @@ public:
 		}
 
 		texData = std::vector<T>{ pix.getData(), pix.getData() + pix.size() };
-		data_shape = (useNHWC) ? std::array<int64_t, 4>{ 1, int(tex.getWidth()), int(tex.getHeight()), int(pix.getNumChannels()) }
-		: array<int64_t, 4>{ 1, int(pix.getNumChannels()), int(tex.getWidth()), int(tex.getHeight()) };
+		data_shape = (useNHWC) ? std::array<int64_t, 4>{ 1, int(tex.getHeight()), int(tex.getWidth()), int(pix.getNumChannels()) }
+		: array<int64_t, 4>{ 1, int(pix.getNumChannels()), int(tex.getHeight()), int(tex.getWidth()) };
+
 		tensor = Ort::Value::CreateTensor<T>(memInfo, texData.data(), texData.size(), data_shape.data(), data_shape.size());
 	}
 
