@@ -4,27 +4,16 @@
 void ofApp::setup() {
 	const ORTCHAR_T* modelName = L"tinyyolov2-8.onnx";
 	ort = new ofxOrt(modelName, true);
-
 	ort->printModelInfo();
 
-	//vid.load("danceInOcean.mp4");
-	//vid.play();
+	original.load("cat.jpg");
 
-	original.load("image2.jpg");
-	original.setImageType(OF_IMAGE_COLOR);
-	original.resize(416, 416);
-	original.update();
 	fbo.allocate(416, 416, GL_RGB);
-
-
-	grabber.setDeviceID(1);
-	grabber.initGrabber(416, 416);
-
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-	grabber.update();
+	scale = (ofGetWidth() / 1.3) / original.getWidth();
 }
 
 //--------------------------------------------------------------
@@ -34,19 +23,17 @@ void ofApp::draw() {
 	original.draw(0.0, 0.0, fbo.getWidth(), fbo.getHeight());
 	fbo.end();
 
-	original.draw(0.0, 0.0, 416, 416);
+	original.draw(0.0, 0.0, original.getWidth() * scale, original.getHeight() * scale);
 
 	ofFloatPixels pix;
 	ofFloatPixels chw;
 	fbo.getTexture().readToPixels(pix);
 
-	ofxOrtUtils::rgb2chw(pix, chw, false, true,255.0);
+	ofxOrtUtils::rgb2chw(pix, chw, false, true, 255.0);
 	ofFloatImage src;
 	src.setFromPixels(chw);
 	src.update();
 
-
-	//vid.
 	inference(src);
 
 }
@@ -72,7 +59,7 @@ void ofApp::inference(ofFloatImage& content) {
 	std::vector<uint64_t> classIndices;
 	const float confidenceThresh = 0.5;
 
-	postProcess(output_tensor.getTexData(), bboxes, scores, classIndices, confidenceThresh);
+	objectDetectionWithModelOutput(output_tensor.getTexData(), bboxes, scores, classIndices, confidenceThresh);
 
 	std::vector<string> labels{
 		"aeroplane", "bicycle", "bird", "boat", "bottle",
@@ -81,49 +68,20 @@ void ofApp::inference(ofFloatImage& content) {
 		"pottedplant", "sheep", "sofa", "train", "tvmonitor" };
 
 	for (int i = 0; i < bboxes.size(); i++) {
+		drawBoundingBox(bboxes[i], labels[classIndices[i]], scores[i]);
 
-		ofNoFill();
-		std::cout << "---------------" << std::endl;
-		std::cout << "class:" << labels[int(classIndices[i])] << std::endl;
-		std::cout << "xmin:" << bboxes[i][0] << " ymin: " << bboxes[i][1] << " xmax : " << bboxes[i][2] << " ymax : " << bboxes[i][3] << std::endl;
-		ofDrawRectangle(bboxes[i][0], bboxes[i][1], abs(bboxes[i][0] - bboxes[i][2]), abs(bboxes[i][1] - bboxes[i][3]));
-		ofFill();
 	}
-	ofFloatPixels pix;
-
-	std::vector<std::vector<float>> dstArray;
-	ofxOrtUtils::splitImageDataArray(output_tensor.getTexData(), dstArray, numChannels, outWidth, outHeight);
-	std::vector<ofFloatImage> featureMaps = ofxOrtUtils::buildImagesFromData(dstArray, outWidth, outHeight);
-
-	for (int i = 0; i < numChannels; i++) {
-		int size = (ofGetWidth() / 2.0) / 12;
-		glm::vec2 offset(size * (i / 12), size * (i % 12));
-
-		//draw heatmaps
-		featureMaps[i].draw(ofGetWidth() / 2.0 + offset.x, offset.y, size, size);
-	}
-
 }
 
 void ofApp::exit() {
 	delete ort;
 }
 
-
-
-void ofApp::postProcess(const std::vector<float>& inferenceOutput,
+void ofApp::objectDetectionWithModelOutput(const std::vector<float>& inferenceOutput,
 	std::vector<std::array<float, 4>>& bboxes,
 	std::vector<float>& scores,
 	std::vector<uint64_t>& classIndices, const float confidenceThresh)
 {
-
-	const int IMG_WIDTH = 416;
-	const int IMG_HEIGHT = 416;
-	const int IMG_CHANNEL = 3;
-	const int FEATURE_MAP_SIZE = 13 * 13;
-	const int NUM_BOXES = 1 * 13 * 13 * 125;
-	const int NUM_ANCHORS = 5;
-	const float ANCHORS[10] = { 1.08, 1.19, 3.42, 4.41, 6.63, 11.38, 9.42, 5.11, 16.62, 10.52 };
 
 	std::vector<float> outputData{ inferenceOutput.begin(), inferenceOutput.begin() + NUM_BOXES };
 
@@ -164,4 +122,21 @@ void ofApp::postProcess(const std::vector<float>& inferenceOutput,
 			}
 		}
 	}
+}
+
+void ofApp::drawBoundingBox(std::array<float, 4>& bbox, std::string& className, float score) {
+
+	ofPushMatrix();
+	ofScale((original.getWidth() / fbo.getWidth()) * scale, (original.getHeight() / fbo.getHeight()) * scale);
+	ofTranslate(bbox[0], bbox[1]);
+	ofFill();
+	ofSetColor(255);
+	ofDrawRectangle(0.0, 0.0, abs(bbox[0] - bbox[2]), 14.0);
+	ofSetColor(0);
+	ofDrawBitmapString(ofToString(className) + " " + ofToString(score), 0.0, 12.0);
+	ofSetColor(255);
+	ofNoFill();
+	ofDrawRectangle(0, 0.0, abs(bbox[0] - bbox[2]), abs(bbox[1] - bbox[3]));
+	ofFill();
+	ofPopMatrix();
 }
