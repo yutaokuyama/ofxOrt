@@ -20,8 +20,8 @@ void ofApp::inference() {
 
 	auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
-	ofxOrtImageTensor input_tensor_original = ofxOrtImageTensor(memory_info, sampleFbo.getTexture(), true);
-	ofxOrt1DTensor output_tensor_original = ofxOrt1DTensor(memory_info, 10);
+	ofxOrtImageTensor<float> input_tensor_original(memory_info, sampleFbo.getTexture(), true);
+	ofxOrt1DTensor<float> output_tensor_original(memory_info, 10);
 
 	ort->forward(Ort::RunOptions{ nullptr }, input_names, &(input_tensor_original.getTensor()), 1, output_names, &(output_tensor_original.getTensor()), 1);
 	drawBins(output_tensor_original.getData());

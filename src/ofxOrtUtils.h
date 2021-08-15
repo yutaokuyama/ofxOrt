@@ -21,18 +21,48 @@ public:
 			src.swapRgb();
 		}
 		if (shouldNormalize) {
-			for (int i = 0; i < src.getHeight(); i++) {
-				for (int j = 0; j < src.getWidth(); j++) {
-					int index = i * src.getHeight() + j;
-					src[3 * index + 0] = (src[3 * index + 0] - 0.406) / 0.225;
-					src[3 * index + 1] = (src[3 * index + 1] - 0.456) / 0.224;
-					src[3 * index + 2] = (src[3 * index + 2] - 0.485) / 0.229;
-				}
-			}
+			normalizePixel(src);
 		}
 		hwc2chw(src, dst);
 	}
 
+
+	static void rgb2chw(ofFloatPixels src, ofFloatPixels& dst, bool shouldNormalize, bool shouldSwapRg, const float scaleValue = 1.0) {
+		//TODO::extremely inefficient
+		if (shouldSwapRg) {
+			src.swapRgb();
+		}
+		if (shouldNormalize) {
+			normalizePixel(src);
+		}
+		scalePixelValue(src, scaleValue);
+
+		hwc2chw(src, dst);
+	}
+
+
+
+	static void scalePixelValue(ofFloatPixels& pixels, const float value) {
+		for (int i = 0; i < pixels.getHeight(); i++) {
+			for (int j = 0; j < pixels.getWidth(); j++) {
+				int index = i * pixels.getHeight() + j;
+				pixels[3 * index + 0] *= value;
+				pixels[3 * index + 1] *= value;
+				pixels[3 * index + 2] *= value;
+			}
+		}
+	}
+
+	static void normalizePixel(ofFloatPixels& pixels) {
+		for (int i = 0; i < pixels.getHeight(); i++) {
+			for (int j = 0; j < pixels.getWidth(); j++) {
+				int index = i * pixels.getHeight() + j;
+				pixels[3 * index + 0] = (pixels[3 * index + 0] - 0.406) / 0.225;
+				pixels[3 * index + 1] = (pixels[3 * index + 1] - 0.456) / 0.224;
+				pixels[3 * index + 2] = (pixels[3 * index + 2] - 0.485) / 0.229;
+			}
+		}
+	}
 	//TODO::extremely inefficient
 
 	static void chw2hwc(const ofFloatPixels& pixels_chw, ofFloatPixels& pixels_hwc, bool normalize = false) {
@@ -75,4 +105,74 @@ public:
 		}
 		return images;
 	}
+
+	static void ofxOrtUtils::softmax(float* input, const size_t inputLen)
+	{
+		const float maxVal = *std::max_element(input, input + inputLen);
+
+		const float sum = std::accumulate(input, input + inputLen, 0.0,
+			[&](float a, const float b) { return std::move(a) + expf(b - maxVal); });
+
+		const float offset = maxVal + logf(sum);
+		for (auto it = input; it != (input + inputLen); ++it) {
+			*it = expf(*it - offset);
+		}
+	}
+
+	static float ofxOrtUtils::sigmoid(const float x)
+	{
+		return 1.0 / (1.0 + expf(-x));
+	}
+
+	static std::string getONNXTensorElementDataTypeName(ONNXTensorElementDataType id) {
+		switch (id) {
+		case 0:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UNDEFINED");
+		case 1:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT");   // maps to c type float
+		case 2:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT8");   // maps to c type uint8_
+		case 3:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_INT8");    // maps to c type 
+		case 4:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT16");  // maps to c type uint16_t
+
+		case 5:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_INT16");   // maps to c type int16_t
+
+		case 6:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_INT32");   // maps to c type int32_t
+
+		case 7:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_INT64");   // maps to c type int64_t
+
+		case 8:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_STRING");  // maps to c++ type std::string
+
+		case 9:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_BOOL");
+
+		case 10:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16");
+
+		case 11:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE");      // maps to c type double
+		case 12:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT32");      // maps to c type uint32_t
+
+		case 13:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT64");      // maps to c type uint64_t
+
+		case 14:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_COMPLEX64");   // complex with float32 real and imaginary components
+
+		case 15:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_COMPLEX128");  // complex with float64 real and imaginary components
+
+		case 16:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_BFLOAT16");     // Non-IEEE floating-point format based on IEEE754 single-precision
+
+		}
+	}
+
 };
