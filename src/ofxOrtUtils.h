@@ -75,4 +75,56 @@ public:
 		}
 		return images;
 	}
+
+	static std::string getONNXTensorElementDataTypeName(ONNXTensorElementDataType id) {
+		switch (id) {
+		case 0:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UNDEFINED");
+		case 1:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT");   // maps to c type float
+		case 2:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT8");   // maps to c type uint8_
+		case 3:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_INT8");    // maps to c type 
+		case 4:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT16");  // maps to c type uint16_t
+
+		case 5:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_INT16");   // maps to c type int16_t
+
+		case 6:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_INT32");   // maps to c type int32_t
+
+		case 7:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_INT64");   // maps to c type int64_t
+
+		case 8:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_STRING");  // maps to c++ type std::string
+
+		case 9:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_BOOL");
+
+		case 10:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16");
+
+		case 11:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE");      // maps to c type double
+		case 12:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT32");      // maps to c type uint32_t
+
+		case 13:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT64");      // maps to c type uint64_t
+
+		case 14:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_COMPLEX64");   // complex with float32 real and imaginary components
+
+		case 15:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_COMPLEX128");  // complex with float64 real and imaginary components
+
+		case 16:
+			return std::string("ONNX_TENSOR_ELEMENT_DATA_TYPE_BFLOAT16");     // Non-IEEE floating-point format based on IEEE754 single-precision
+
+		}
+	}
+
 };

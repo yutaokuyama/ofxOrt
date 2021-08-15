@@ -84,8 +84,8 @@ void ofxOrt::printModelInfo() {
 	std::cout << "Output Count: " << getSessionOutputCount() << std::endl;
 	std::cout << "Input Name: " << getSessionInputName() << std::endl;
 	std::cout << "Output Name: " << getSessionOutputName() << std::endl;
-	std::cout << "Input Type: " << getSessionInputType() << std::endl;
-	std::cout << "Output Type: " << getSessionOutputType() << std::endl;
+	std::cout << "Input Type: " << ofxOrtUtils::getONNXTensorElementDataTypeName(getSessionInputType()) << std::endl;
+	std::cout << "Output Type: " << ofxOrtUtils::getONNXTensorElementDataTypeName(getSessionOutputType()) << std::endl;
 	std::cout << "Input dims: ";
 	for (auto& value : getInputDims()) {
 		std::cout << value << " ";
