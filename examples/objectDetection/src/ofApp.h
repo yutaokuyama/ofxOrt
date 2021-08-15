@@ -21,7 +21,6 @@ public:
 		std::vector<uint64_t>& classIndices, const float confidenceThresh);
 
 	void drawBoundingBox(std::array<float, 4>& bbox, std::string& className, float score);
-	void drawSource();
 
 	ofxOrt* ort;
 	ofFbo fbo;
