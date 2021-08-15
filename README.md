@@ -1,5 +1,5 @@
 # ofxOrt
-Thin wrapper of [ONNX runtime](https://onnxruntime.ai/) for openFrameworks.
+Thin wrapper of [ONNX runtime](https://onnxruntime.ai/) for openFrameworks.<br >
 [![Image from Gyazo](https://i.gyazo.com/56963392300c548b3499d25184385e7e.gif)](https://gyazo.com/56963392300c548b3499d25184385e7e)
 ## Note
 **This addon is still in an experimental stage,** so I'll make breaking changes frequently :(.
