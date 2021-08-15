@@ -31,7 +31,7 @@ void ofApp::draw() {
 	ofFloatPixels chw;
 	fbo.getTexture().readToPixels(pix);
 
-	ofxOrtUtils::rgb2chw(pix, chw, true, true);
+	ofxOrtUtils::rgb2chw(pix, chw, true, true, 1.0);
 
 	ofFloatImage src;
 	src.setFromPixels(chw);
@@ -78,7 +78,7 @@ void ofApp::inference(ofFloatImage& content) {
 		cv::minMaxLoc(heatmatMat, NULL, NULL, NULL, &jointPosition);
 		glm::vec2 jointPointAsOf = ofxCv::toOf(jointPosition);
 		float scale = (ofGetWidth() / 2.0) / width;
-		ofDrawCircle(jointPointAsOf.x * scale, jointPointAsOf.y * scale, 2);
+		ofDrawCircle(jointPointAsOf.x * scale, jointPointAsOf.y * scale, 4);
 	}
 
 }
