@@ -65,7 +65,7 @@ public:
 	}
 	//TODO::extremely inefficient
 
-	static void chw2hwc(const ofFloatPixels& pixels_chw, ofFloatPixels& pixels_hwc, bool normalize = false) {
+	static void chw2hwc(const ofFloatPixels& pixels_chw, ofFloatPixels& pixels_hwc,float scaleValue=1.0) {
 
 		int stride = int(pixels_chw.getWidth() * pixels_chw.getHeight());
 
@@ -74,10 +74,7 @@ public:
 			for (int i = 0; i != stride; ++i) {
 				float f = pixels_chw[t + i];
 				if (f < 0.f || f > 255.0f) f = 0;
-				pixels_hwc[i * 3 + c] = f;
-				if (normalize) {
-					pixels_hwc[i * 3 + c] /= 255.0;
-				}
+				pixels_hwc[i * 3 + c] = f*scaleValue;
 			}
 		}
 	}
