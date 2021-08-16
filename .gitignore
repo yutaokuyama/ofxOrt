@@ -6,6 +6,11 @@
 *\obj
 *\.vs
 *\packages
-*\bin
 *.exe
 *.user
+*.dll
+*.exp
+*.lib
+*.pdb
+*.onnx
+*.gitkeep
