@@ -5,17 +5,17 @@
 class ofApp : public ofBaseApp {
 
 public:
-	void setup();
-	void update();
-	void draw();
-	void keyPressed(int key);
+  void setup();
+  void update();
+  void draw();
+  void keyPressed(int key);
 
-	void inference(ofFloatImage& content);
+  void inference(ofFloatImage &content);
 
-	ofxOrt* ort;
+  ofxOrt *ort;
 
-	ofFloatPixels pixCHW;
+  ofFloatPixels pixCHW;
 
-	ofFbo fbo;
-	ofVideoGrabber grabber;
+  ofFbo fbo;
+  ofVideoGrabber grabber;
 };
