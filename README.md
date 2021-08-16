@@ -4,6 +4,10 @@ Thin wrapper of [ONNX runtime](https://onnxruntime.ai/) for openFrameworks.<br >
 ## Note
 **This addon is still in an experimental stage,** so I'll make breaking changes frequently :(.
 
+## Dependencies
+- [ofxCv](https://github.com/kylemcdonald/ofxCv)
+- ofxOpenCV
+
 ## Prepare 
 Install ONNX runtime by following the [document](https://onnxruntime.ai/docs/how-to/install.html).
 
