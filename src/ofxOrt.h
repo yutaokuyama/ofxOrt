@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ofMain.h"
 #include "ofxOrtTensors.h"
 #include "ofxOrtUtils.h"
@@ -14,16 +15,16 @@ public:
                size_t input_count, const char *const *output_names,
                Ort::Value *output_values, size_t output_count);
 
-  const size_t getSessionInputCount();
-  const size_t getSessionOutputCount();
-  const string getSessionInputName();
-  const string getSessionOutputName();
+  size_t getSessionInputCount() const;
+  size_t getSessionOutputCount() const;
+  std::string getSessionInputName();
+  std::string getSessionOutputName();
 
-  const ONNXTensorElementDataType getSessionInputType();
-  const ONNXTensorElementDataType getSessionOutputType();
+  ONNXTensorElementDataType getSessionInputType() const;
+  ONNXTensorElementDataType getSessionOutputType() const;
 
-  const std::vector<int64_t> getInputDims();
-  const std::vector<int64_t> getOutputDims();
+  std::vector<int64_t> getInputDims() const;
+  std::vector<int64_t> getOutputDims() const;
 
   void printModelInfo();
 

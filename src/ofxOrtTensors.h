@@ -44,8 +44,10 @@ public:
                                     data_shape.data(), data_shape.size());
   }
 
+  const Ort::Value &getTensor() const { return tensor; }
   Ort::Value &getTensor() { return tensor; }
 
+  const std::vector<T> &getTexData() const { return texData; };
   std::vector<T> &getTexData() { return texData; };
 
 private:
@@ -64,9 +66,11 @@ public:
                                     data_shape_.data(), data_shape_.size());
   }
 
+  const Ort::Value &getTensor() const { return tensor_; }
   Ort::Value &getTensor() { return tensor_; }
 
-  std::vector<T> getData() { return data_; }
+  const std::vector<T> &getData() const { return data_; }
+  std::vector<T> &getData() { return data_; }
 
 private:
   std::vector<T> data_;
