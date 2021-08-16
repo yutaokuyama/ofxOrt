@@ -29,31 +29,31 @@ void ofxOrt::enableCUDA(Ort::SessionOptions &options) {
   options.AppendExecutionProvider_CUDA(cuda_option);
 }
 
-const size_t ofxOrt::getSessionInputCount() {
+size_t ofxOrt::getSessionInputCount() const {
   assert(session_);
   return session_->GetInputCount();
 }
-const size_t ofxOrt::getSessionOutputCount() {
+size_t ofxOrt::getSessionOutputCount() const {
   assert(session_);
   return session_->GetOutputCount();
 }
-const string ofxOrt::getSessionInputName() {
+std::string ofxOrt::getSessionInputName() const {
   assert(session_);
   return session_->GetInputName(0, defaultAllocator_);
 }
-const string ofxOrt::getSessionOutputName() {
+std::string ofxOrt::getSessionOutputName() const {
   assert(session_);
   return session_->GetOutputName(0, defaultAllocator_);
 }
 
-const ONNXTensorElementDataType ofxOrt::getSessionInputType() {
+ONNXTensorElementDataType ofxOrt::getSessionInputType() const {
   assert(session_);
   Ort::TypeInfo inputTypeInfo = session_->GetInputTypeInfo(0);
   auto inputTensorInfo = inputTypeInfo.GetTensorTypeAndShapeInfo();
   ONNXTensorElementDataType inputType = inputTensorInfo.GetElementType();
   return inputType;
 }
-const ONNXTensorElementDataType ofxOrt::getSessionOutputType() {
+ONNXTensorElementDataType ofxOrt::getSessionOutputType() const {
   assert(session_);
   Ort::TypeInfo outputTypeInfo = session_->GetOutputTypeInfo(0);
   auto outputTensorInfo = outputTypeInfo.GetTensorTypeAndShapeInfo();
@@ -61,21 +61,20 @@ const ONNXTensorElementDataType ofxOrt::getSessionOutputType() {
   return outputType;
 }
 
-const std::vector<int64_t> ofxOrt::getInputDims() {
+std::vector<int64_t> ofxOrt::getInputDims() const {
   assert(session_);
   Ort::TypeInfo inputTypeInfo = session_->GetInputTypeInfo(0);
   auto inputTensorInfo = inputTypeInfo.GetTensorTypeAndShapeInfo();
   return inputTensorInfo.GetShape();
 }
-const std::vector<int64_t> ofxOrt::getOutputDims() {
+std::vector<int64_t> ofxOrt::getOutputDims() const {
   assert(session_);
   Ort::TypeInfo outputTypeInfo = session_->GetOutputTypeInfo(0);
   auto outputTensorInfo = outputTypeInfo.GetTensorTypeAndShapeInfo();
   return outputTensorInfo.GetShape();
-  ;
 }
 
-void ofxOrt::printModelInfo() {
+void ofxOrt::printModelInfo() const {
   std::cout << "---------------------" << std::endl;
   std::cout << "Model Info:" << std::endl;
   std::cout << "Input Count: " << getSessionInputCount() << std::endl;
@@ -91,12 +90,12 @@ void ofxOrt::printModelInfo() {
                    getSessionOutputType())
             << std::endl;
   std::cout << "Input dims: ";
-  for (auto &value : getInputDims()) {
+  for (auto value : getInputDims()) {
     std::cout << value << " ";
   }
   std::cout << std::endl;
   std::cout << "Output dims: ";
-  for (auto &value : getOutputDims()) {
+  for (auto value : getOutputDims()) {
     std::cout << value << " ";
   }
   std::cout << std::endl;
