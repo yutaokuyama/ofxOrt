@@ -37,11 +37,11 @@ size_t ofxOrt::getSessionOutputCount() const {
   assert(session_);
   return session_->GetOutputCount();
 }
-std::string ofxOrt::getSessionInputName() const {
+std::string ofxOrt::getSessionInputName() {
   assert(session_);
   return session_->GetInputName(0, defaultAllocator_);
 }
-std::string ofxOrt::getSessionOutputName() const {
+std::string ofxOrt::getSessionOutputName() {
   assert(session_);
   return session_->GetOutputName(0, defaultAllocator_);
 }
@@ -74,7 +74,7 @@ std::vector<int64_t> ofxOrt::getOutputDims() const {
   return outputTensorInfo.GetShape();
 }
 
-void ofxOrt::printModelInfo() const {
+void ofxOrt::printModelInfo() {
   std::cout << "---------------------" << std::endl;
   std::cout << "Model Info:" << std::endl;
   std::cout << "Input Count: " << getSessionInputCount() << std::endl;

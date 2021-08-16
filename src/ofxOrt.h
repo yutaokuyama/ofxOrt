@@ -17,8 +17,8 @@ public:
 
   size_t getSessionInputCount() const;
   size_t getSessionOutputCount() const;
-  std::string getSessionInputName() const;
-  std::string getSessionOutputName() const;
+  std::string getSessionInputName();
+  std::string getSessionOutputName();
 
   ONNXTensorElementDataType getSessionInputType() const;
   ONNXTensorElementDataType getSessionOutputType() const;
@@ -26,7 +26,7 @@ public:
   std::vector<int64_t> getInputDims() const;
   std::vector<int64_t> getOutputDims() const;
 
-  void printModelInfo() const;
+  void printModelInfo();
 
 private:
   void enableCUDA(Ort::SessionOptions &options);
