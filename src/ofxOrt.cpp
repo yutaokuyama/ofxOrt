@@ -37,13 +37,15 @@ size_t ofxOrt::getSessionOutputCount() const {
   assert(session_);
   return session_->GetOutputCount();
 }
-std::string ofxOrt::getSessionInputName() {
+std::string ofxOrt::getSessionInputName() const {
   assert(session_);
-  return session_->GetInputName(0, defaultAllocator_);
+  Ort::AllocatorWithDefaultOptions defaultAllocator;
+  return session_->GetInputName(0, defaultAllocator);
 }
-std::string ofxOrt::getSessionOutputName() {
+std::string ofxOrt::getSessionOutputName() const {
   assert(session_);
-  return session_->GetOutputName(0, defaultAllocator_);
+  Ort::AllocatorWithDefaultOptions defaultAllocator;
+  return session_->GetOutputName(0, defaultAllocator);
 }
 
 ONNXTensorElementDataType ofxOrt::getSessionInputType() const {
@@ -74,7 +76,7 @@ std::vector<int64_t> ofxOrt::getOutputDims() const {
   return outputTensorInfo.GetShape();
 }
 
-void ofxOrt::printModelInfo() {
+void ofxOrt::printModelInfo() const {
   std::cout << "---------------------" << std::endl;
   std::cout << "Model Info:" << std::endl;
   std::cout << "Input Count: " << getSessionInputCount() << std::endl;
