@@ -20,18 +20,23 @@ void ofApp::update() {}
 void ofApp::draw() {
 
   fbo.begin();
-  ofSetColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255));
-  ofDrawCircle(mouseX, mouseY, ofRandom(10, 100));
+  ofClear(0, 255);
+  //ofSetColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255));
+  //ofDrawCircle(mouseX, mouseY, ofRandom(10, 100));
+  grabber.draw(0.0, 0.0, fbo.getWidth(), fbo.getHeight());
   fbo.end();
   fbo.draw(0.0, 0.0);
 
   ofFloatPixels hwcPixels;
+
   fbo.getTexture().readToPixels(hwcPixels);
-  ofxOrtUtils::rgb2chw(hwcPixels, pixCHW, true, true, 1.0);
-  ofFloatImage img_CHW;
-  img_CHW.setFromPixels(pixCHW);
-  img_CHW.update();
-  inference(img_CHW);
+
+  
+
+  ofImage result;
+  result.setFromPixels(ort.inference(hwcPixels, fbo.getWidth(), fbo.getHeight()));
+  result.update();
+  result.draw(720.0, 0.0);
 }
 
 //--------------------------------------------------------------

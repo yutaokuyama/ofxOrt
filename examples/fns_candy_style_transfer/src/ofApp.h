@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxOrt.h"
 
+
 class ThreadedInference: public ofThread {
 public:
     void setup() {
@@ -10,7 +11,12 @@ public:
         ort = new ofxOrt(modelName, true);
         ort->printModelInfo();
     }
-    ofFloatPixels inference(ofFloatPixels& input,int width,int height) {
+    ofFloatPixels inference(ofFloatPixels& HWCPix,int width,int height) {
+
+
+        ofFloatPixels pixCHW(HWCPix);
+        ofxOrtUtils::rgb2chw(HWCPix, pixCHW, true, true, 1.0);
+
         const char* input_names[] = { "inputImage" };
         const char* output_names[] = { "outputImage" };
 
@@ -18,8 +24,8 @@ public:
             Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
 
-        ofxOrtImageTensor<float> input_tensor(memory_info, input, width, height);
-        ofxOrtImageTensor<float> output_tensor(memory_info, input, width, height);
+        ofxOrtImageTensor<float> input_tensor(memory_info, pixCHW, width, height);
+        ofxOrtImageTensor<float> output_tensor(memory_info, pixCHW, width, height);
 
         ort->forward(Ort::RunOptions{ nullptr }, input_names,
             &(input_tensor.getTensor()), 1, output_names,
@@ -28,8 +34,8 @@ public:
         ofFloatPixels pix_result;
 
         pix_result.setFromAlignedPixels(output_tensor.getTexData().data(),
-            input.getWidth(), input.getHeight(),
-            OF_PIXELS_RGB, input.getHeight() * 3);
+            pixCHW.getWidth(), pixCHW.getHeight(),
+            OF_PIXELS_RGB, pixCHW.getHeight() * 3);
 
         ofFloatPixels chwPixels(ofxOrtUtils::chw2hwc(pix_result, 1.0 / 255.0));
         chwPixels.swapRgb();
