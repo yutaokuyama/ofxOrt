@@ -10,12 +10,12 @@ public:
   void draw();
   void keyPressed(int key);
 
-  void inference(ofFloatImage &content);
+  ofFloatPixels inference(ofFloatPixels& content, int width, int height);
 
-  ofxOrt *ort;
 
   ofFloatPixels pixCHW;
 
   ofFbo fbo;
   ofVideoGrabber grabber;
+  ofxOrt* ort;
 };

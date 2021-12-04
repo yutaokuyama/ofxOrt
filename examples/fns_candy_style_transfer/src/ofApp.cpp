@@ -43,7 +43,7 @@ void ofApp::keyPressed(int key) {
   }
 }
 
-void ofApp::inference(ofFloatImage &content) {
+ofFloatPixels ofApp::inference(ofFloatPixels &content,int width,int height) {
 
   const char *input_names[] = {"inputImage"};
   const char *output_names[] = {"outputImage"};
@@ -51,27 +51,22 @@ void ofApp::inference(ofFloatImage &content) {
   auto memory_info =
       Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
-  ofFloatPixels pix;
-  ofFloatPixels pix_result;
 
-  content.getTexture().readToPixels(pix);
-  content.getTexture().readToPixels(pix_result);
-
-  ofxOrtImageTensor<float> input_tensor(memory_info, content.getTexture());
-  ofxOrtImageTensor<float> output_tensor(memory_info, content.getTexture());
+  ofxOrtImageTensor<float> input_tensor(memory_info, content, width,height);
+  ofxOrtImageTensor<float> output_tensor(memory_info, content, width, height);
 
   ort->forward(Ort::RunOptions{nullptr}, input_names,
                &(input_tensor.getTensor()), 1, output_names,
                &(output_tensor.getTensor()), 1);
 
-  pix.setFromAlignedPixels(output_tensor.getTexData().data(),
+  ofFloatPixels pix_result;
+
+  pix_result.setFromAlignedPixels(output_tensor.getTexData().data(),
                            content.getWidth(), content.getHeight(),
                            OF_PIXELS_RGB, content.getHeight() * 3);
 
-  ofxOrtUtils::chw2hwc(pix, pix_result, 1.0 / 255.0);
-  pix_result.swapRgb();
-  ofImage result;
-  result.setFromPixels(pix_result);
-  result.update();
-  result.draw(720.0, 0.0);
+  ofFloatPixels chwPixels(ofxOrtUtils::chw2hwc(pix_result, 1.0 / 255.0));
+  chwPixels.swapRgb();
+  return chwPixels;
+
 }

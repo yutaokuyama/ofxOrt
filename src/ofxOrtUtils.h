@@ -83,6 +83,7 @@ public:
     }
   }
 
+
   static void splitImageDataArray(const std::vector<float> data,
                                   std::vector<std::vector<float>> &dstArray,
                                   const int numTex, const int width,
