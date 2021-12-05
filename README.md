@@ -2,7 +2,7 @@
 Thin wrapper of [ONNX runtime](https://onnxruntime.ai/) for openFrameworks.<br >
 [![Image from Gyazo](https://i.gyazo.com/56963392300c548b3499d25184385e7e.gif)](https://gyazo.com/56963392300c548b3499d25184385e7e)
 ## Note
-**This addon is still in an experimental stage,** so I'll make breaking changes frequently :(.
+**This addon is still in an experimental stage,** and I'm not skilled developer, so I'll make breaking changes frequently :(
 
 ## Dependencies
 - [ofxCv](https://github.com/kylemcdonald/ofxCv)
