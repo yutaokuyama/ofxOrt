@@ -53,8 +53,8 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
 
-	fbo.draw(0.0, 0.0, 360, 360);
-	resultImage.draw(720.0 / 2.0, 0.0, 360, 360);
+	fbo.draw(0.0, 0.0);
+	resultImage.draw(720.0, 0.0);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 0, 10);
 
 }
