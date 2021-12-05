@@ -2,76 +2,99 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-  const ORTCHAR_T *modelName = L"candy.onnx";
-  ort = new ofxOrt(modelName, true);
+	const ORTCHAR_T* modelName = L"candy.onnx";
 
-  fbo.allocate(720, 720, GL_RGB);
-  fbo.begin();
-  ofClear(0, 255);
-  fbo.end();
+	fbo.allocate(720, 720, GL_RGB);
+	fbo.begin();
+	ofClear(0, 255);
+	fbo.end();
 
-  ort->printModelInfo();
+
+	ort.setup(720, 720);
+
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {}
+void ofApp::update() {
+
+	fbo.begin();
+	ofSetColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255));
+	ofDrawCircle(mouseX, mouseY, ofRandom(10, 100));
+	fbo.end();
+
+
+	//I'm not sure if this is the right implementation for exclusions.
+	if (fbo.checkStatus()) {
+
+
+		ort.lock();
+		if (!_isImageSet && !ort.isThreadRunning()) {
+			setImageToModel();
+
+		}
+		if (ort._isImageProcessed && _isImageSet) {
+			readImageFromModel();
+		}
+
+		ort.unlock();
+
+
+
+		if (!ort.isThreadRunning()) {
+			ort.startThread(false);
+		}
+
+
+
+	}
+
+}
 
 //--------------------------------------------------------------
 void ofApp::draw() {
 
-  fbo.begin();
-  ofSetColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255));
-  ofDrawCircle(mouseX, mouseY, ofRandom(10, 100));
-  fbo.end();
-  fbo.draw(0.0, 0.0);
+	fbo.draw(0.0, 0.0);
+	resultImage.draw(720.0, 0.0);
+	ofDrawBitmapString(ofToString(ofGetFrameRate()), 0, 10);
 
-  ofFloatPixels hwcPixels;
-  fbo.getTexture().readToPixels(hwcPixels);
-  ofxOrtUtils::rgb2chw(hwcPixels, pixCHW, true, true, 1.0);
-  ofFloatImage img_CHW;
-  img_CHW.setFromPixels(pixCHW);
-  img_CHW.update();
-  inference(img_CHW);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-  if (key == ' ') {
-    fbo.begin();
-    ofClear(0, 255);
-    fbo.end();
-  }
+	if (key == ' ') {
+		fbo.begin();
+		ofClear(0, 255);
+		fbo.end();
+	}
 }
 
-void ofApp::inference(ofFloatImage &content) {
+void ofApp::updateResultImage() {
+	resultImage.setFromPixels(ort._dstPixels);
+	resultImage.update();
+}
 
-  const char *input_names[] = {"inputImage"};
-  const char *output_names[] = {"outputImage"};
+void ofApp::exit() {
 
-  auto memory_info =
-      Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
-  ofFloatPixels pix;
-  ofFloatPixels pix_result;
+	ort.stopThread();
 
-  content.getTexture().readToPixels(pix);
-  content.getTexture().readToPixels(pix_result);
 
-  ofxOrtImageTensor<float> input_tensor(memory_info, content.getTexture());
-  ofxOrtImageTensor<float> output_tensor(memory_info, content.getTexture());
 
-  ort->forward(Ort::RunOptions{nullptr}, input_names,
-               &(input_tensor.getTensor()), 1, output_names,
-               &(output_tensor.getTensor()), 1);
+}
 
-  pix.setFromAlignedPixels(output_tensor.getTexData().data(),
-                           content.getWidth(), content.getHeight(),
-                           OF_PIXELS_RGB, content.getHeight() * 3);
+void ofApp::setImageToModel() {
 
-  ofxOrtUtils::chw2hwc(pix, pix_result, 1.0 / 255.0);
-  pix_result.swapRgb();
-  ofImage result;
-  result.setFromPixels(pix_result);
-  result.update();
-  result.draw(720.0, 0.0);
+	fbo.getTexture().readToPixels(ort._srcHWCPixels);
+
+
+	_isImageSet = true;
+	ort._isImageProcessed = false;
+
+}
+
+void ofApp::readImageFromModel() {
+
+	updateResultImage();
+	_isImageSet = false;
+	ort._isImageProcessed = false;
 }

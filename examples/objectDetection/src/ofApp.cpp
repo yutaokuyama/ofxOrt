@@ -48,7 +48,10 @@ void ofApp::inference(ofFloatImage &content) {
   const int outWidth = 13;
   const int outHeight = 13;
 
-  ofxOrtImageTensor<float> input_tensor(memory_info, content.getTexture());
+  ofFloatPixels pix;
+  content.getTexture().readToPixels(pix);
+
+  ofxOrtImageTensor<float> input_tensor(memory_info,pix,content.getWidth(),content.getHeight() );
   ofxOrtImageTensor<float> output_tensor(memory_info, numChannels, outWidth,
                                          outHeight, true);
   ort->forward(Ort::RunOptions{nullptr}, input_names,

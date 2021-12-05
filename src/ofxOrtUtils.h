@@ -83,6 +83,23 @@ public:
     }
   }
 
+
+  static ofFloatPixels chw2hwc(const ofFloatPixels& pixels_chw, float scaleValue = 1.0) {
+
+      int stride = int(pixels_chw.getWidth() * pixels_chw.getHeight());
+      ofFloatPixels pixels_hwc(pixels_chw);
+      for (int c = 0; c != 3; ++c) {
+          int t = c * stride;
+          for (int i = 0; i != stride; ++i) {
+              float f = pixels_chw[t + i];
+              if (f < 0.f || f > 255.0f)
+                  f = 0;
+              pixels_hwc[i * 3 + c] = f * scaleValue;
+          }
+      }
+      return pixels_hwc;
+  }
+
   static void splitImageDataArray(const std::vector<float> data,
                                   std::vector<std::vector<float>> &dstArray,
                                   const int numTex, const int width,

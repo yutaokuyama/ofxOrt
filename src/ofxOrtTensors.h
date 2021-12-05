@@ -4,22 +4,21 @@
 
 template <class T> class ofxOrtImageTensor {
 public:
-  ofxOrtImageTensor(Ort::MemoryInfo &memInfo, ofTexture &tex,
+  ofxOrtImageTensor(Ort::MemoryInfo &memInfo, ofFloatPixels &pix,int width,int height,
                     bool isGrayscale = false, bool useNHWC = false)
       : tensor(nullptr) {
-    ofFloatPixels pix;
-    tex.readToPixels(pix);
+
     if (isGrayscale) {
       pix.setImageType(OF_IMAGE_GRAYSCALE);
     }
 
     texData = std::vector<T>{pix.getData(), pix.getData() + pix.size()};
-    data_shape = (useNHWC) ? std::array<int64_t, 4>{1, int(tex.getHeight()),
-                                                    int(tex.getWidth()),
+    data_shape = (useNHWC) ? std::array<int64_t, 4>{1, height,
+                                                    width,
                                                     int(pix.getNumChannels())}
                            : array<int64_t, 4>{1, int(pix.getNumChannels()),
-                                               int(tex.getHeight()),
-                                               int(tex.getWidth())};
+                                               height,
+                                               width};
 
     tensor =
         Ort::Value::CreateTensor<T>(memInfo, texData.data(), texData.size(),

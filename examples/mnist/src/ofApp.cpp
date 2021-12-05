@@ -5,6 +5,7 @@ void ofApp::setup() {
   allocateFbos();
   clearFbos();
   buildModel();
+  ort->printModelInfo();
 }
 
 void ofApp::buildModel() {
@@ -20,8 +21,11 @@ void ofApp::inference() {
   auto memory_info =
       Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
+  ofFloatPixels pix;
+  sampleFbo.getTexture().readToPixels(pix);
+
   ofxOrtImageTensor<float> input_tensor_original(memory_info,
-                                                 sampleFbo.getTexture(), true);
+                                                 pix,pix.getWidth(),pix.getHeight(), true);
   ofxOrt1DTensor<float> output_tensor_original(memory_info, 10);
 
   ort->forward(Ort::RunOptions{nullptr}, input_names,

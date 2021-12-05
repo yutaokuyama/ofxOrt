@@ -14,7 +14,10 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() { vid.update(); }
+void ofApp::update() { 
+    vid.update();
+
+}
 
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -52,8 +55,9 @@ void ofApp::inference(ofFloatImage &content) {
   const int height = 64;
 
   ofFloatPixels pix;
+  content.getTexture().readToPixels(pix);
 
-  ofxOrtImageTensor<float> input_tensor(memory_info, content.getTexture());
+  ofxOrtImageTensor<float> input_tensor(memory_info,pix, pix.getWidth(), pix.getHeight());
   ofxOrtImageTensor<float> output_tensor(memory_info, numChannel, width, height,
                                          true);
 
