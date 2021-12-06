@@ -87,6 +87,7 @@ public:
   static ofFloatPixels chw2hwc(const ofFloatPixels& pixels_chw, float scaleValue = 1.0) {
 
       int stride = int(pixels_chw.getWidth() * pixels_chw.getHeight());
+      
       ofFloatPixels pixels_hwc(pixels_chw);
       for (int c = 0; c != 3; ++c) {
           int t = c * stride;
@@ -111,6 +112,19 @@ public:
       dstArray.emplace_back(std::vector<float>(
           {data.begin() + offset * i, data.begin() + offset * i + offset}));
     }
+  }
+
+  static void splitImageDataArray(const float* data,
+      std::vector<std::vector<float>>& dstArray,
+      const int numTex, const int width,
+      const int height) {
+      // TODO: grayscale only
+      // dstArray.resize(numTex);
+      const int offset = (width * height);
+      for (int i = 0; i < numTex; i++) {
+          dstArray.emplace_back(std::vector<float>(
+              { data + offset * i, data + offset * i + offset }));
+      }
   }
 
   static std::vector<ofFloatImage>
