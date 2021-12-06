@@ -48,6 +48,10 @@ public:
 
   const std::vector<T> &getTexData() const { return texData; };
   std::vector<T> &getTexData() { return texData; };
+    
+  const T* getData() const {
+      return tensor.GetTensorData<T>();
+  };
 
 private:
   Ort::Value tensor;
