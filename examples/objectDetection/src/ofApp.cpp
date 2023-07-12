@@ -2,10 +2,10 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-  ort = new ofxOrt(ORT_TSTR("tinyyolov2-8.onnx"), true);
+  ort = new ofxOrt(ORT_TSTR("data/model/tinyyolov2-8.onnx"), true);
   ort->printModelInfo();
 
-  original.load("cat.jpg");
+  ofLoadImage(original, "image/cat.jpg");
 
   fbo.allocate(416, 416, GL_RGB);
 }
@@ -15,24 +15,24 @@ void ofApp::update() { scale = (ofGetWidth() / 1.3) / original.getWidth(); }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  fbo.begin();
-  ofClear(0, 255);
-  original.draw(0.0, 0.0, fbo.getWidth(), fbo.getHeight());
-  fbo.end();
+    fbo.begin();
+    ofClear(0, 255);
+    original.draw(0.0, 0.0, fbo.getWidth(), fbo.getHeight());
+    fbo.end();
 
-  original.draw(0.0, 0.0, original.getWidth() * scale,
-                original.getHeight() * scale);
+    original.draw(0.0, 0.0, original.getWidth() * scale,
+        original.getHeight() * scale);
 
-  ofFloatPixels pix;
-  ofFloatPixels chw;
-  fbo.getTexture().readToPixels(pix);
+    ofFloatPixels pix;
+    ofFloatPixels chw;
+    fbo.getTexture().readToPixels(pix);
 
-  ofxOrtUtils::rgb2chw(pix, chw, false, true, 255.0);
-  ofFloatImage src;
-  src.setFromPixels(chw);
-  src.update();
+    ofxOrtUtils::rgb2chw(pix, chw, false, true, 255.0);
+    ofFloatImage src;
+    src.setFromPixels(chw);
+    src.update();
 
-  inference(src);
+    inference(src);
 }
 
 //--------------------------------------------------------------
