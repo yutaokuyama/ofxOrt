@@ -2,11 +2,10 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-    ort = new ofxOrt(ORT_TSTR("data/model/tinyyolov2-8.onnx"), true);
+  ort = new ofxOrt(ORT_TSTR("data/model/tinyyolov2-8.onnx"), true);
   allocateFbos();
   clearFbos();
   buildModel();
-  
   ort->printModelInfo();
 }
 
