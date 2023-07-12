@@ -13,18 +13,18 @@ void ofApp::update() {
 		ofSetColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255));
 		ofDrawCircle(ofGetMouseX(), ofGetMouseY(), ofRandom(10, 100));
 		fbo.end();
-		ort.lock();
-		if (!_isImageSet && !ort.isThreadRunning()) {
-			setImageToModel();
+	}
+	ort.lock();
+	if (!_isImageSet && !ort.isThreadRunning()) {
+		setImageToModel();
 
-		}
-		if (ort._isImageProcessed && _isImageSet) {
-			readImageFromModel();
-		}
-		ort.unlock();
-		if (!ort.isThreadRunning()) {
-			ort.startThread(false);
-		}
+	}
+	if (ort._isImageProcessed && _isImageSet) {
+		readImageFromModel();
+	}
+	ort.unlock();
+	if (!ort.isThreadRunning()) {
+		ort.startThread(false);
 	}
 }
 
