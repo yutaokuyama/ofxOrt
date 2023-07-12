@@ -39,6 +39,10 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button) {
+	fbo.begin();
+	ofSetColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255));
+	ofDrawCircle(ofGetMouseX(), ofGetMouseY(), ofRandom(10, 100));
+	fbo.end();
 	isMousePressed = true;
 }
 
