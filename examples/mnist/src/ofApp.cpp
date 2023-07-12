@@ -2,15 +2,16 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+    ort = new ofxOrt(ORT_TSTR("data/model/tinyyolov2-8.onnx"), true);
   allocateFbos();
   clearFbos();
   buildModel();
+  
   ort->printModelInfo();
 }
 
 void ofApp::buildModel() {
-  const ORTCHAR_T *modelName = L"mnist.onnx";
-  ort = new ofxOrt(modelName, true);
+  ort = new ofxOrt(ORT_TSTR("data/model/mnist.onnx"), true);
 }
 
 void ofApp::inference() {
