@@ -2,9 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-  const ORTCHAR_T *modelName = L"pose.onnx";
-  ort = new ofxOrt(modelName, true);
-
+  ort = new ofxOrt(ORT_TSTR("data/model/pose.onnx"), true);
   ort->printModelInfo();
 
   vid.load("danceInOcean.mp4");

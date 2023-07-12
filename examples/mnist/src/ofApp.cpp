@@ -9,8 +9,7 @@ void ofApp::setup() {
 }
 
 void ofApp::buildModel() {
-  const ORTCHAR_T *modelName = L"mnist.onnx";
-  ort = new ofxOrt(modelName, true);
+  ort = new ofxOrt(ORT_TSTR("data/model/mnist.onnx"), true);
 }
 
 void ofApp::inference() {

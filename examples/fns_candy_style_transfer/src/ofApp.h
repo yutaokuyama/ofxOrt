@@ -9,8 +9,7 @@ public:
 
 	void setup(const int width, const int height)
 	{
-		const ORTCHAR_T* modelName = L"candy.onnx";
-		ort = new ofxOrt(modelName, true);
+		ort = new ofxOrt(ORT_TSTR("data/model/candy.onnx"), true);
 		ort->printModelInfo();
 		_srcHWCPixels.allocate(width, height, OF_IMAGE_COLOR);
 	}
@@ -40,8 +39,8 @@ public:
 		ofxOrtImageTensor<float> output_tensor(memory_info, pixCHW, _srcHWCPixels.getWidth(), _srcHWCPixels.getHeight());
 
 		ort->forward(Ort::RunOptions{ nullptr }, input_names,
-			&(input_tensor.getTensor()), 1, output_names,
-			&(output_tensor.getTensor()), 1);
+			& (input_tensor.getTensor()), 1, output_names,
+			& (output_tensor.getTensor()), 1);
 
 		_dstPixels.setFromAlignedPixels(output_tensor.getTexData().data(),
 			pixCHW.getWidth(), pixCHW.getHeight(),
@@ -73,21 +72,20 @@ public:
 	void draw();
 	void exit() override;
 	void keyPressed(int key);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
 	void updateResultImage();
 
 	void setImageToModel();
 	void readImageFromModel();
-
-	//ofFloatPixels inference(ofFloatPixels& content, int width, int height);
-
 
 	ofFloatPixels pixCHW;
 
 	ofFbo fbo;
 	ofVideoGrabber grabber;
 	ThreadedInference ort;
-	ofImage resultImage;
+	ofTexture resultImage;
 	bool isFboReady = false;
 	bool _isImageSet = false;
-
+	bool isMousePressed;
 };

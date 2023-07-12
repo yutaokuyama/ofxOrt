@@ -26,7 +26,7 @@ public:
   ofxOrt *ort;
   ofFbo fbo;
 
-  ofFloatImage original;
+  ofTexture original;
 
   const int IMG_WIDTH = 416;
   const int IMG_HEIGHT = 416;

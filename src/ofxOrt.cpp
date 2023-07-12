@@ -51,8 +51,11 @@ std::vector<std::string> ofxOrt::getSessionInputNames(size_t inputCount) const {
 	assert(session_);
 	Ort::AllocatorWithDefaultOptions defaultAllocator;
 	std::vector<std::string> inputNames;
+	std::vector<Ort::AllocatedStringPtr> inputNodeNameAllocatedStrings;
 	for (int i = 0; i < inputCount; i++) {
-		inputNames.push_back(session_->GetInputName(inputCount - i - 1, defaultAllocator));
+		auto input_name = session_->GetInputNameAllocated(inputCount - i - 1, defaultAllocator);
+		inputNodeNameAllocatedStrings.push_back(std::move(input_name));
+		inputNames.push_back(inputNodeNameAllocatedStrings.back().get());
 	}
 	return inputNames;
 }
@@ -60,8 +63,11 @@ std::vector<std::string> ofxOrt::getSessionOutputNames(size_t outputCount) const
 	assert(session_);
 	Ort::AllocatorWithDefaultOptions defaultAllocator;
 	std::vector<std::string> outputNames;
+	std::vector<Ort::AllocatedStringPtr> outputNodeNameAllocatedStrings;
 	for (int i = 0; i < outputCount; i++) {
-		outputNames.push_back(session_->GetOutputName(outputCount - i - 1, defaultAllocator));
+		auto output_name = session_->GetOutputNameAllocated(outputCount - i - 1, defaultAllocator);
+		outputNodeNameAllocatedStrings.push_back(std::move(output_name));
+		outputNames.push_back(outputNodeNameAllocatedStrings.back().get());
 	}
 	return outputNames;
 }
